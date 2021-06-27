@@ -1,9 +1,10 @@
 const http = require('http')
 const util = require('util')
+const url = require('url')
 const exec = util.promisify(require('child_process').exec)
 const server = http.createServer((q,r)=>{
     let data = `Error ${r.method}`;
-    const command = 'notify-send'
+    const command = `${url.parse(q.url).pathname.slice(1)||"echo"}`;
     data ='';
     q.on('data',(c)=> data+=c )
     q.on('end',async()=>{
