@@ -11,14 +11,14 @@ const server = http.createServer((q,r)=>{
     q.on('end',async()=>{
         try{
             if(env.LOG<6) console.log(`Running ${command}:\n<${data}`)
-            data = data && JSON.parse(data) 
+            data = data.split(',') //&& JSON.parse(data) 
             if(env.LOG<6) console.log(`exec('${command} ${JSON.stringify(data)}')`)
             data = await exec(`${command} ${Object.values(data).map(s=>s).join(' ')}`,{shell:true}).catch(()=>'Error');
             if(data.stderr) throw new Error(data.stderr);
 
             //data = `"${data.stdout}"`
             if(env.LOG<6)console.log(`>${JSON.stringify(data)}`)
-            r.end(JSON.stringify(data))
+            r.end(JSON.stringify(data.stdout||data.stderr))
         }
         catch(e){ 
             if(env.LOG>4)console.error(e)
